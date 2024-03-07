@@ -1,15 +1,23 @@
 FROM debian:buster
 
-RUN apt -yqq update; apt -yqq upgrade
-RUN apt -yqq install php-fpm php-mysql
-RUN apt -yqq install php-fpm php-mysql php-gd php-cli php-curl \
-	php-mbstring php-zip php-opcache php-xml php-mysqli
+RUN apt-get -y upgrade && apt-get -y update && \
+	apt-get -y install php7.3 php-fpm \
+	php-mysql mariadb-client wget
 
-RUN mkdir -p /var/www/html/
+RUN mkdir -p /var/www/wordpress
 
-WORKDIR /var/www/html/
+WORKDIR /var/www/wordpress
 
-RUN wget https://wordpress.org/latest.tar.gz && \
-	tar -xvzf latest.tar.gz
+RUN wget -O /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x /usr/local/bin/wp && \
+	wp --allow-root core download && \
+	sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = wordpress:9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 
-RUN  chown -R nginx: /var/www/html/
+
+COPY ./conf/setup.sh /tmp/setup.sh
+
+RUN chmod +x /tmp/setup.sh
+
+WORKDIR /tmp
+
+CMD ["./setup.sh"]
