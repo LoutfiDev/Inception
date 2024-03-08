@@ -13,7 +13,7 @@ services:
     ports:
       - 443:443
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/wordpress
     networks:
       - inception
 
@@ -30,7 +30,7 @@ services:
     env_file:
       - path: ./.env
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/wordpress
     depends_on:
       - mariadb
     networks:
@@ -60,12 +60,14 @@ networks:
 
 volumes:
   mariadb:
+    name: "mariadb"
     driver: local
     driver_opts:
       type: none
       o: bind
       device: /home/soulang/data/mariadb
   wordpress:
+    name: "wordpress"
     driver: local
     driver_opts:
       type: none
