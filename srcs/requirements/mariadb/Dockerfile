@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 RUN apt-get update && apt-get install mariadb-server -y
 
@@ -11,4 +11,3 @@ RUN chmod +x /tmp/setup_mariadb.sh
 WORKDIR /tmp
 
 CMD ["./setup_mariadb.sh"]
-
